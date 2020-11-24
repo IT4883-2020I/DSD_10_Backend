@@ -92,6 +92,10 @@ const updateMonitorCampaign = async (req, res) => {
     startTime,
   } = req.body;
 
+  if (!_id) {
+    throw new CustomError(codes.BAD_REQUEST, 'Missing _id');
+  }
+
   const monitorCampaign = await MonitorCampaign.findByIdAndUpdate(
     _id,
     {
@@ -110,9 +114,34 @@ const updateMonitorCampaign = async (req, res) => {
     { new: true }
   );
 
+  if (!monitorCampaign) {
+    throw new CustomError(codes.NOT_FOUND);
+  }
+
   // Cap nhat trang thai cua drone la khong co san
 
   // Cap nhat trang thai cua mien giam sat
+
+  res.send({
+    status: 1,
+    result: {
+      monitorCampaign,
+    },
+  });
+};
+
+const removeMonitorCampaign = async (req, res) => {
+  const { _id } = req.body;
+
+  if (!_id) {
+    throw new CustomError(codes.BAD_REQUEST, 'Missing _id');
+  }
+
+  const monitorCampaign = await MonitorCampaign.findByIdAndRemove(_id);
+
+  if (!monitorCampaign) {
+    throw new CustomError(codes.NOT_FOUND);
+  }
 
   res.send({
     status: 1,
@@ -126,4 +155,5 @@ module.exports = {
   createMonitorCampaign,
   getMonitorCampaigns,
   updateMonitorCampaign,
+  removeMonitorCampaign,
 };
