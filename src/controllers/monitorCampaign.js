@@ -1,7 +1,8 @@
 const MonitorCampaign = require('../models/monitorCampaign');
 const CustomError = require('../errors/CustomError');
 const codes = require('../errors/code');
-const moment = require('moment');
+const axios = require('axios').default;
+
 const createMonitorCampaign = async (req, res) => {
   const {
     labels,
@@ -50,11 +51,13 @@ const getMonitorCampaigns = async (req, res) => {
   }
 
   if (!timeTo) {
-    timeFrom = '2025-1-1';
+    timeTo = '2025-1-1';
   }
 
   timeTo = new Date(timeTo);
   timeFrom = new Date(timeFrom);
+
+  console.log({ timeFrom, timeTo });
 
   const monitorCampains = await MonitorCampaign.find({
     startTime: { $gte: timeFrom },
@@ -62,6 +65,8 @@ const getMonitorCampaigns = async (req, res) => {
   })
     .populate('labels')
     .lean();
+
+  console.log({ monitorCampains });
 
   const numberOfMonitorCampaigns = monitorCampains.length;
 
@@ -72,16 +77,23 @@ const getMonitorCampaigns = async (req, res) => {
         monitoredObject: monitoredObjectId,
         monitoredZone: monitoredZoneId,
       } = monitorCampain;
+      let res;
 
       // map droneIds with fully info drones
 
       // map monitoredObject with fully info monitor object
+      res = await axios.get(
+        `https://dsd05-monitored-object.herokuapp.com/monitored-object/detail-monitored-object/${monitoredObjectId}`
+      );
+
+      const monitoredObject = res.data.content;
 
       // map monitoredZone with fully info monitor zone
+      // res = await axios.get(``);
 
       return {
         ...monitorCampain,
-        monitoredObject: { _id: monitoredObjectId, name: 'Lửa trại' },
+        monitoredObject,
         monitoredZone: { _id: monitoredZoneId, name: 'Tiểu khu A' },
       };
     })
