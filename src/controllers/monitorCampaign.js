@@ -72,7 +72,7 @@ const getMonitorCampaigns = async (req, res) => {
   res.send({
     status: 1,
     result: {
-      monitorCampains: monitorCampainsFullInfo,
+      monitorCampaigns: monitorCampainsFullInfo,
     },
   });
 };
