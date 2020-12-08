@@ -203,7 +203,9 @@ const getMonitorCampaignById = async (req, res) => {
     throw new CustomError(codes.BAD_REQUEST, 'Missing monitorCampaignId');
   }
 
-  const monitorCampaign = await MonitorCampaign.findById(monitorCampaignId);
+  const monitorCampaign = await MonitorCampaign.findById(
+    monitorCampaignId
+  ).lean();
 
   if (!monitorCampaign) {
     throw new CustomError(codes.NOT_FOUND);
@@ -211,9 +213,9 @@ const getMonitorCampaignById = async (req, res) => {
 
   const {
     drones: droneIds,
-    monitoredObject: monitoredObjectIds,
+    monitoredObjects: monitoredObjectIds,
     monitoredZone: monitoredZoneId,
-  } = monitorCampain;
+  } = monitorCampaign;
   let response;
 
   // map droneIds with fully info drones
@@ -223,7 +225,7 @@ const getMonitorCampaignById = async (req, res) => {
       response = await axios.get(
         `http://skyrone.cf:6789/drone/getById/${droneId}`
       );
-      return { ...res.data };
+      return { ...response.data };
     })
   );
 
@@ -233,7 +235,7 @@ const getMonitorCampaignById = async (req, res) => {
       response = await axios.get(
         `https://dsd05-monitored-object.herokuapp.com/monitored-object/detail-monitored-object/${monitoredObjectId}`
       );
-      return { ...res.data };
+      return { ...response.data };
     })
   );
 
@@ -242,7 +244,7 @@ const getMonitorCampaignById = async (req, res) => {
     `https://monitoredzoneserver.herokuapp.com/monitoredzone/zoneinfo/${monitoredZoneId}`
   );
 
-  const monitoredZone = res.data.content.zone;
+  const monitoredZone = response.data.content.zone;
 
   // return {
   //   ...monitorCampain,
@@ -252,11 +254,13 @@ const getMonitorCampaignById = async (req, res) => {
   // };
   res.send({
     status: 1,
-    monitorCampaign: {
-      ...monitorCampain,
-      monitoredObjects,
-      monitoredZone,
-      drones,
+    result: {
+      monitorCampaign: {
+        ...monitorCampaign,
+        monitoredObjects,
+        monitoredZone,
+        drones,
+      },
     },
   });
 };
