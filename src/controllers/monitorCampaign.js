@@ -200,10 +200,10 @@ const getMonitorCampaignById = async (req, res) => {
   const { monitorCampaignId } = req.params;
 
   if (!monitorCampaignId) {
-    throw new CustomError(codes.BAD_REQUEST, 'Missing _id');
+    throw new CustomError(codes.BAD_REQUEST, 'Missing monitorCampaignId');
   }
 
-  const monitorCampaign = await MonitorCampaign.findById(_id);
+  const monitorCampaign = await MonitorCampaign.findById(monitorCampaignId);
 
   if (!monitorCampaign) {
     throw new CustomError(codes.NOT_FOUND);
