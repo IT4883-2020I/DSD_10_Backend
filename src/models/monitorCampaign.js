@@ -20,10 +20,10 @@ const monitorCampaignSchema = mongoose.Schema(
         required: true,
       },
     ],
-    monitoredObject: {
+    monitoredObjects: [{
       type: String,
       required: true,
-    },
+    }],
     monitoredZone: {
       type: String,
       required: true,
