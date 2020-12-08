@@ -206,10 +206,49 @@ const getMonitorCampaignById = async (req, res) => {
     throw new CustomError(codes.NOT_FOUND);
   }
 
+  const {
+    drones: droneIds,
+    monitoredObject: monitoredObjectId,
+    monitoredZone: monitoredZoneId,
+  } = monitorCampain;
+  let res;
+
+  // map droneIds with fully info drones
+
+  const drones = await Promise.all(
+    droneIds.map(async (droneId) => {
+      res = await axios.get(`http://skyrone.cf:6789/drone/getById/${droneId}`);
+      return { ...res.data };
+    })
+  );
+
+  // map monitoredObject with fully info monitor object
+  res = await axios.get(
+    `https://dsd05-monitored-object.herokuapp.com/monitored-object/detail-monitored-object/${monitoredObjectId}`
+  );
+
+  const monitoredObject = res.data.content;
+
+  // map monitoredZone with fully info monitor zone
+  res = await axios.get(
+    `https://monitoredzoneserver.herokuapp.com/monitoredzone/zoneinfo/${monitoredZoneId}`
+  );
+
+  const monitoredZone = res.data.content.zone;
+
+  // return {
+  //   ...monitorCampain,
+  //   monitoredObject,
+  //   monitoredZone,
+  //   drones,
+  // };
   res.send({
     status: 1,
-    result: {
-      monitorCampaign,
+    monitorCampaign: {
+      ...monitorCampain,
+      monitoredObject,
+      monitoredZone,
+      drones,
     },
   });
 };
