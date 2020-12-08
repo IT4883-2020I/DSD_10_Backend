@@ -14,6 +14,6 @@ router.post('/', asyncMiddleware(createMonitorCampaign));
 router.get('/', asyncMiddleware(getMonitorCampaigns));
 router.patch('/', asyncMiddleware(updateMonitorCampaign));
 router.delete('/', asyncMiddleware(removeMonitorCampaign));
-router.get('/:_id', asyncMiddleware(getMonitorCampaignById));
+router.get('/:monitorCampaignId', asyncMiddleware(getMonitorCampaignById));
 
 module.exports = router;
