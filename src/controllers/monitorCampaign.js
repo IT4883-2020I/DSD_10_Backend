@@ -1,6 +1,7 @@
 const MonitorCampaign = require('../models/monitorCampaign');
 const CustomError = require('../errors/CustomError');
 const codes = require('../errors/code');
+const moment = require('moment');
 const createMonitorCampaign = async (req, res) => {
   const {
     labels,
@@ -43,9 +44,26 @@ const createMonitorCampaign = async (req, res) => {
 };
 
 const getMonitorCampaigns = async (req, res) => {
-  const monitorCampains = await MonitorCampaign.find({})
+  let { timeFrom, timeTo } = req.query;
+  if (!timeFrom) {
+    timeFrom = '2020-1-1';
+  }
+
+  if (!timeTo) {
+    timeFrom = '2025-1-1';
+  }
+
+  timeTo = new Date(timeTo);
+  timeFrom = new Date(timeFrom);
+
+  const monitorCampains = await MonitorCampaign.find({
+    startTime: { $gte: timeFrom },
+    endTime: { $lte: timeTo },
+  })
     .populate('labels')
     .lean();
+
+  const numberOfMonitorCampaigns = monitorCampains.length;
 
   const monitorCampainsFullInfo = await Promise.all(
     monitorCampains.map(async (monitorCampain) => {
@@ -72,6 +90,7 @@ const getMonitorCampaigns = async (req, res) => {
   res.send({
     status: 1,
     result: {
+      numberOfMonitorCampaigns,
       monitorCampaigns: monitorCampainsFullInfo,
     },
   });
@@ -153,9 +172,9 @@ const removeMonitorCampaign = async (req, res) => {
 };
 
 const getMonitorCampaignById = async (req, res) => {
-  const { _id } = req.params;
+  const { monitorCampaignId } = req.params;
 
-  if (!_id) {
+  if (!monitorCampaignId) {
     throw new CustomError(codes.BAD_REQUEST, 'Missing _id');
   }
 
