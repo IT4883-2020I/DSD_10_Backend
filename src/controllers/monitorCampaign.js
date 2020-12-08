@@ -70,7 +70,7 @@ const getMonitorCampaigns = async (req, res) => {
     monitorCampains.map(async (monitorCampain) => {
       const {
         drones: droneIds,
-        monitoredObject: monitoredObjectId,
+        monitoredObjects: monitoredObjectIds,
         monitoredZone: monitoredZoneId,
       } = monitorCampain;
       let res;
@@ -87,11 +87,14 @@ const getMonitorCampaigns = async (req, res) => {
       );
 
       // map monitoredObject with fully info monitor object
-      res = await axios.get(
-        `https://dsd05-monitored-object.herokuapp.com/monitored-object/detail-monitored-object/${monitoredObjectId}`
+      const monitoredObjects = await Promise.all(
+        monitoredObjectIds.map(async (monitoredObjectId) => {
+          res = await axios.get(
+            `https://dsd05-monitored-object.herokuapp.com/monitored-object/detail-monitored-object/${monitoredObjectId}`
+          );
+          return { ...res.data };
+        })
       );
-
-      const monitoredObject = res.data.content;
 
       // map monitoredZone with fully info monitor zone
       res = await axios.get(
@@ -102,7 +105,7 @@ const getMonitorCampaigns = async (req, res) => {
 
       return {
         ...monitorCampain,
-        monitoredObject,
+        monitoredObjects,
         monitoredZone,
         drones,
       };
@@ -208,7 +211,7 @@ const getMonitorCampaignById = async (req, res) => {
 
   const {
     drones: droneIds,
-    monitoredObject: monitoredObjectId,
+    monitoredObject: monitoredObjectIds,
     monitoredZone: monitoredZoneId,
   } = monitorCampain;
   let response;
@@ -225,11 +228,14 @@ const getMonitorCampaignById = async (req, res) => {
   );
 
   // map monitoredObject with fully info monitor object
-  response = await axios.get(
-    `https://dsd05-monitored-object.herokuapp.com/monitored-object/detail-monitored-object/${monitoredObjectId}`
+  const monitoredObjects = await Promise.all(
+    monitoredObjectIds.map(async (monitoredObjectId) => {
+      response = await axios.get(
+        `https://dsd05-monitored-object.herokuapp.com/monitored-object/detail-monitored-object/${monitoredObjectId}`
+      );
+      return { ...res.data };
+    })
   );
-
-  const monitoredObject = res.data.content;
 
   // map monitoredZone with fully info monitor zone
   response = await axios.get(
@@ -248,7 +254,7 @@ const getMonitorCampaignById = async (req, res) => {
     status: 1,
     monitorCampaign: {
       ...monitorCampain,
-      monitoredObject,
+      monitoredObjects,
       monitoredZone,
       drones,
     },
