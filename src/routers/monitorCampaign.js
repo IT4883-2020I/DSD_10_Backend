@@ -6,6 +6,7 @@ const {
   getMonitorCampaigns,
   updateMonitorCampaign,
   removeMonitorCampaign,
+  getMonitorCampaignById,
 } = require('../controllers/monitorCampaign');
 const asyncMiddleware = require('../middlewares/async');
 
@@ -13,5 +14,6 @@ router.post('/', asyncMiddleware(createMonitorCampaign));
 router.get('/', asyncMiddleware(getMonitorCampaigns));
 router.patch('/', asyncMiddleware(updateMonitorCampaign));
 router.delete('/', asyncMiddleware(removeMonitorCampaign));
+router.get('/:_id', asyncMiddleware(getMonitorCampaignById));
 
 module.exports = router;

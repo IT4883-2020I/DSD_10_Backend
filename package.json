@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node src/index.js",
     "dev": "nodemon src/index.js",
-    "createDefaultAttachParam": "node src/scripts/createDefaultAttachParams"
+    "createDefaultLabels": "node src/scripts/createDefaultLabels"
   },
   "dependencies": {
     "cors": "^2.8.5",

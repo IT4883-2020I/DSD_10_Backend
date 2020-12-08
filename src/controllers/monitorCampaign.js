@@ -1,8 +1,9 @@
 const MonitorCampaign = require('../models/monitorCampaign');
-
+const CustomError = require('../errors/CustomError');
+const codes = require('../errors/code');
 const createMonitorCampaign = async (req, res) => {
   const {
-    attachParams,
+    labels,
     description,
     drones,
     endTime,
@@ -16,7 +17,7 @@ const createMonitorCampaign = async (req, res) => {
   } = req.body;
 
   const monitorCampaign = await MonitorCampaign.create({
-    attachParams,
+    labels,
     description,
     drones,
     endTime,
@@ -43,7 +44,7 @@ const createMonitorCampaign = async (req, res) => {
 
 const getMonitorCampaigns = async (req, res) => {
   const monitorCampains = await MonitorCampaign.find({})
-    .populate('attachParams')
+    .populate('labels')
     .lean();
 
   const monitorCampainsFullInfo = await Promise.all(
@@ -79,7 +80,7 @@ const getMonitorCampaigns = async (req, res) => {
 const updateMonitorCampaign = async (req, res) => {
   const {
     _id,
-    attachParams,
+    labels,
     description,
     drones,
     endTime,
@@ -99,7 +100,7 @@ const updateMonitorCampaign = async (req, res) => {
   const monitorCampaign = await MonitorCampaign.findByIdAndUpdate(
     _id,
     {
-      attachParams,
+      labels,
       description,
       drones,
       endTime,
@@ -151,9 +152,31 @@ const removeMonitorCampaign = async (req, res) => {
   });
 };
 
+const getMonitorCampaignById = async (req, res) => {
+  const { _id } = req.params;
+
+  if (!_id) {
+    throw new CustomError(codes.BAD_REQUEST, 'Missing _id');
+  }
+
+  const monitorCampaign = await MonitorCampaign.findById(_id);
+
+  if (!monitorCampaign) {
+    throw new CustomError(codes.NOT_FOUND);
+  }
+
+  res.send({
+    status: 1,
+    result: {
+      monitorCampaign,
+    },
+  });
+};
+
 module.exports = {
   createMonitorCampaign,
   getMonitorCampaigns,
   updateMonitorCampaign,
   removeMonitorCampaign,
+  getMonitorCampaignById,
 };

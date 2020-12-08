@@ -40,10 +40,10 @@ const monitorCampaignSchema = mongoose.Schema(
       type: String,
       required: true,
     },
-    attachParams: [
+    labels: [
       {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'AttachParam',
+        ref: 'Label',
       },
     ],
     description: {

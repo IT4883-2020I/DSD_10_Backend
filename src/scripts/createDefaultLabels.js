@@ -1,68 +1,61 @@
 require('dotenv').config();
 require('../models/mongoose');
 
-const AttachParam = require('../models/attachParam');
+const Label = require('../models/label');
 
 (async () => {
   let i = 0;
-  await AttachParam.create({
+  await Label.create({
     name: 'Nhiệt độ',
     description: '',
-    property: '',
     isDefault: true,
   });
   i++;
   console.log('Finished: ', i);
 
-  await AttachParam.create({
+  await Label.create({
     name: 'Nguồn UAV',
     description: '',
-    property: '',
     isDefault: true,
   });
   i++;
   console.log('Finished: ', i);
 
-  await AttachParam.create({
+  await Label.create({
     name: 'Thời gian',
     description: '',
-    property: '',
     isDefault: true,
   });
   i++;
   console.log('Finished: ', i);
 
-  await AttachParam.create({
+  await Label.create({
     name: 'Độ ẩm',
     description: '',
-    property: '',
     isDefault: true,
   });
   i++;
   console.log('Finished: ', i);
 
-  await AttachParam.create({
+  await Label.create({
     name: 'Toạ độ',
     description: '',
-    property: '',
     isDefault: true,
   });
   i++;
   console.log('Finished: ', i);
 
-  await AttachParam.create({
+  await Label.create({
     name: 'Hành trình',
     description: '',
-    property: '',
     isDefault: true,
   });
   i++;
   console.log('Finished: ', i);
 
-  await AttachParam.create({
+  await Label.create({
     name: 'Thời tiết',
     description: '',
-    property: '',
     isDefault: true,
   });
   i++;

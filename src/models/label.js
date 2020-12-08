@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const attachParamSchema = mongoose.Schema(
+const labelSchema = mongoose.Schema(
   {
     name: {
       type: String,
@@ -12,15 +12,12 @@ const attachParamSchema = mongoose.Schema(
     description: {
       type: String,
     },
-    property: {
-      type: String,
-    },
   },
   {
     timestamps: true,
   }
 );
 
-const attachParamModel = mongoose.model('AttachParam', attachParamSchema);
+const labelModel = mongoose.model('Label', labelSchema);
 
-module.exports = attachParamModel;
+module.exports = labelModel;
