@@ -211,26 +211,28 @@ const getMonitorCampaignById = async (req, res) => {
     monitoredObject: monitoredObjectId,
     monitoredZone: monitoredZoneId,
   } = monitorCampain;
-  let res;
+  let response;
 
   // map droneIds with fully info drones
 
   const drones = await Promise.all(
     droneIds.map(async (droneId) => {
-      res = await axios.get(`http://skyrone.cf:6789/drone/getById/${droneId}`);
+      response = await axios.get(
+        `http://skyrone.cf:6789/drone/getById/${droneId}`
+      );
       return { ...res.data };
     })
   );
 
   // map monitoredObject with fully info monitor object
-  res = await axios.get(
+  response = await axios.get(
     `https://dsd05-monitored-object.herokuapp.com/monitored-object/detail-monitored-object/${monitoredObjectId}`
   );
 
   const monitoredObject = res.data.content;
 
   // map monitoredZone with fully info monitor zone
-  res = await axios.get(
+  response = await axios.get(
     `https://monitoredzoneserver.herokuapp.com/monitoredzone/zoneinfo/${monitoredZoneId}`
   );
 
