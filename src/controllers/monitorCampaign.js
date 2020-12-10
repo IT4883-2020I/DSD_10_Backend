@@ -7,6 +7,7 @@ const createMonitorCampaign = async (req, res) => {
   const {
     labels,
     description,
+    task,
     drones,
     endTime,
     mechanism,
@@ -21,6 +22,7 @@ const createMonitorCampaign = async (req, res) => {
   const monitorCampaign = await MonitorCampaign.create({
     labels,
     description,
+    task,
     drones,
     endTime,
     mechanism,
@@ -126,6 +128,7 @@ const updateMonitorCampaign = async (req, res) => {
     _id,
     labels,
     description,
+    task,
     drones,
     endTime,
     mechanism,
@@ -146,6 +149,7 @@ const updateMonitorCampaign = async (req, res) => {
     {
       labels,
       description,
+      task,
       drones,
       endTime,
       mechanism,

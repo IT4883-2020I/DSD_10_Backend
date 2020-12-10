@@ -6,6 +6,11 @@ const monitorCampaignSchema = mongoose.Schema(
       type: String,
       required: true,
     },
+    task: {
+      type: String,
+      enum: ['Cháy rừng', 'Đê điều', 'Điện', 'Cây trồng'],
+      required: true,
+    },
     startTime: {
       type: Date,
       required: true,
@@ -20,10 +25,12 @@ const monitorCampaignSchema = mongoose.Schema(
         required: true,
       },
     ],
-    monitoredObjects: [{
-      type: String,
-      required: true,
-    }],
+    monitoredObjects: [
+      {
+        type: String,
+        required: true,
+      },
+    ],
     monitoredZone: {
       type: String,
       required: true,
