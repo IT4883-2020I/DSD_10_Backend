@@ -60,8 +60,14 @@ const getMonitorCampaigns = async (req, res) => {
   timeFrom = new Date(timeFrom);
 
   const monitorCampains = await MonitorCampaign.find({
-    startTime: { $gte: timeFrom },
-    endTime: { $lte: timeTo },
+    $or: [
+      {
+        startTime: { $gte: timeFrom, $lte: timeTo },
+      },
+      {
+        endTime: { $gte: timeFrom, $lte: timeTo },
+      },
+    ],
   })
     .populate('labels')
     .lean();

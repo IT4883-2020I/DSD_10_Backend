@@ -14,6 +14,7 @@ app.use(cors());
 app.use('/api/monitor-campaigns', require('./routers/monitorCampaign'));
 app.use('/api/labels', require('./routers/label'));
 app.use('/api/metadata', require('./routers/metadata'));
+app.use('/api/statistics', require('./routers/statistics'));
 
 app.use(errorHandler);
 
