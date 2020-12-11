@@ -34,7 +34,30 @@ const createMonitorCampaign = async (req, res) => {
     startTime,
   });
 
-  // Cap nhat trang thai cua drone la khong co san
+  // Tao hanh trinh bay, cap nhat trang thai drone
+  // const config = {
+  //   headers: {
+  //     'Content-Type': 'application/json',
+  //   },
+  // };
+
+  // const bodyReq = {
+  //   idCampaign: monitorCampaign._id,
+  //   idDroneList: drones.map((drone) => drone._id),
+  //   idLightPath: [],
+  //   idSupervisedArea: monitoredZone,
+  //   name: 'string',
+  //   task,
+  //   timeEnd: endTime,
+  //   timeStart: startTime,
+  // };
+  // const response = await axios.post(
+  //   `http://skyrone.cf:6789/flightItinerary/save`,
+  //   bodyReq,
+  //   config
+  // );
+
+  // console.log({response});
 
   // Cap nhat trang thai cua mien giam sat
 
@@ -77,7 +100,7 @@ const getMonitorCampaigns = async (req, res) => {
   const monitorCampainsFullInfo = await Promise.all(
     monitorCampains.map(async (monitorCampain) => {
       const {
-        drones: droneIds,
+        drones: droneFullInfo,
         monitoredObjects: monitoredObjectIds,
         monitoredZone: monitoredZoneId,
       } = monitorCampain;
@@ -86,11 +109,11 @@ const getMonitorCampaigns = async (req, res) => {
       // map droneIds with fully info drones
 
       const drones = await Promise.all(
-        droneIds.map(async (droneId) => {
+        droneFullInfo.map(async (drone) => {
           res = await axios.get(
-            `http://skyrone.cf:6789/drone/getById/${droneId}`
+            `http://skyrone.cf:6789/drone/getById/${drone.id}`
           );
-          return { ...res.data };
+          return { ...res.data, ...drone };
         })
       );
 

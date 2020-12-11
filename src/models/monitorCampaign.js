@@ -21,8 +21,21 @@ const monitorCampaignSchema = mongoose.Schema(
     },
     drones: [
       {
-        type: String,
-        required: true,
+        _id: false,
+        id: {
+          type: mongoose.Types.ObjectId,
+          required: true,
+        },
+        payload: [
+          {
+            type: String,
+            required: true,
+          },
+        ],
+        flightRoute: {
+          type: String,
+          required: true,
+        },
       },
     ],
     monitoredObjects: [
