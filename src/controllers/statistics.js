@@ -27,29 +27,61 @@ const getQuantityMonitorCampaign = async (req, res) => {
     ],
   });
 
-  const numberOfMonitorCampaigns = monitorCampains.length;
+  const monitorCampaigns = await MonitorCampaign.aggregate([
+    {
+      $match: {
+        $or: [
+          {
+            startTime: { $gte: timeFrom, $lte: timeTo },
+          },
+          {
+            endTime: { $gte: timeFrom, $lte: timeTo },
+          },
+        ],
+      },
+    },
+    {
+      $group: {
+        _id: '$task',
+        total: { $sum: 1 },
+      },
+    },
+  ]);
 
   res.send({
     status: 1,
     result: {
-      numberOfMonitorCampaigns,
+      statistics: monitorCampaigns,
     },
   });
 };
 
 const getQuantityMonitorCampaignCurrently = async (req, res) => {
   const current = new Date();
-  const monitorCampains = await MonitorCampaign.find({
-    startTime: { $lte: current },
-    endTime: { $gte: current },
-  });
+  // const monitorCampains = await MonitorCampaign.find({
+  //   startTime: { $lte: current },
+  //   endTime: { $gte: current },
+  // });
 
-  const numberOfMonitorCampaigns = monitorCampains.length;
+  const monitorCampaigns = await MonitorCampaign.aggregate([
+    {
+      $match: {
+        startTime: { $lte: current },
+        endTime: { $gte: current },
+      },
+    },
+    {
+      $group: {
+        _id: '$task',
+        total: { $sum: 1 },
+      },
+    },
+  ]);
 
   res.send({
     status: 1,
     result: {
-      numberOfMonitorCampaigns,
+      statistics: monitorCampaigns,
     },
   });
 };
