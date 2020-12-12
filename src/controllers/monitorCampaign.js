@@ -57,7 +57,7 @@ const createMonitorCampaign = async (req, res) => {
   //   config
   // );
 
-  // console.log({response});
+  // console.log({ response });
 
   // Cap nhat trang thai cua mien giam sat
 
