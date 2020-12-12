@@ -245,7 +245,7 @@ const getMonitorCampaignById = async (req, res) => {
   }
 
   const {
-    drones: droneIds,
+    drones: droneFullInfo,
     monitoredObjects: monitoredObjectIds,
     monitoredZone: monitoredZoneId,
   } = monitorCampaign;
@@ -254,11 +254,11 @@ const getMonitorCampaignById = async (req, res) => {
   // map droneIds with fully info drones
 
   const drones = await Promise.all(
-    droneIds.map(async (droneId) => {
+    droneFullInfo.map(async (drone) => {
       response = await axios.get(
-        `http://skyrone.cf:6789/drone/getById/${droneId}`
+        `http://skyrone.cf:6789/drone/getById/${drone.id}`
       );
-      return { ...response.data };
+      return { ...response.data, ...drone };
     })
   );
 
