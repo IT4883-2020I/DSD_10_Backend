@@ -35,29 +35,49 @@ const createMonitorCampaign = async (req, res) => {
   });
 
   // Tao hanh trinh bay, cap nhat trang thai drone
-  // const config = {
-  //   headers: {
-  //     'Content-Type': 'application/json',
-  //   },
-  // };
+  const config = {
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  };
 
-  // const bodyReq = {
-  //   idCampaign: monitorCampaign._id,
-  //   idDroneList: drones.map((drone) => drone._id),
-  //   idLightPath: [],
-  //   idSupervisedArea: monitoredZone,
-  //   name: 'string',
-  //   task,
-  //   timeEnd: endTime,
-  //   timeStart: startTime,
-  // };
-  // const response = await axios.post(
-  //   `http://skyrone.cf:6789/flightItinerary/save`,
-  //   bodyReq,
-  //   config
-  // );
+  const droneReqs = drones.map((drone) => {
+    return { idDrone: drone.id, listIdFlightPath: drone.flightPaths };
+  });
 
-  // console.log({ response });
+  let taskReq = 0;
+  switch (task) {
+    case 'Cháy rừng':
+      taskReq = 1;
+      break;
+    case 'Đê điều':
+      taskReq = 2;
+      break;
+    case 'Điện':
+      taskReq = 3;
+      break;
+    case 'Cây trồng':
+      taskReq = 4;
+      break;
+    default:
+      break;
+  }
+
+  const bodyReq = {
+    idCampaign: monitorCampaign._id,
+    linkDronePaths: droneReqs,
+    idSupervisedArea: monitoredZone,
+    name: monitorCampaign.name,
+    task: taskReq,
+    timeEnd: endTime,
+    timeStart: startTime,
+  };
+
+  await axios.post(
+    `http://skyrone.cf:6789/flightItinerary/save`,
+    bodyReq,
+    config
+  );
 
   // Cap nhat trang thai cua mien giam sat
 
