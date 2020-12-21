@@ -166,8 +166,6 @@ const getMonitorCampaigns = async (req, res) => {
         })
       );
 
-      console.log({ monitorObjects });
-
       // map monitoredZone with fully info monitor zone
       res = await axios.get(
         `https://monitoredzoneserver.herokuapp.com/monitoredzone/zoneinfo/${monitoredZoneId}`
