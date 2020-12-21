@@ -7,7 +7,6 @@ const createMonitorCampaign = async (req, res) => {
   const {
     labels,
     description,
-    task,
     drones,
     endTime,
     mechanism,
@@ -18,6 +17,8 @@ const createMonitorCampaign = async (req, res) => {
     resolution,
     startTime,
   } = req.body;
+
+  const task = req.task;
 
   const monitorCampaign = await MonitorCampaign.create({
     labels,
@@ -90,7 +91,8 @@ const createMonitorCampaign = async (req, res) => {
 };
 
 const getMonitorCampaigns = async (req, res) => {
-  let { timeFrom, timeTo, task } = req.query;
+  let { timeFrom, timeTo } = req.query;
+  const task = req.task;
   if (!timeFrom) {
     timeFrom = '2020-1-1';
   }
@@ -163,6 +165,8 @@ const getMonitorCampaigns = async (req, res) => {
           return { ...res.data };
         })
       );
+
+      console.log({ monitorObjects });
 
       // map monitoredZone with fully info monitor zone
       res = await axios.get(

@@ -9,9 +9,10 @@ const {
   getMonitorCampaignById,
 } = require('../controllers/monitorCampaign');
 const asyncMiddleware = require('../middlewares/async');
+const auth = require('../middlewares/auth');
 
-router.post('/', asyncMiddleware(createMonitorCampaign));
-router.get('/', asyncMiddleware(getMonitorCampaigns));
+router.post('/', auth, asyncMiddleware(createMonitorCampaign));
+router.get('/', auth, asyncMiddleware(getMonitorCampaigns));
 router.patch('/', asyncMiddleware(updateMonitorCampaign));
 router.delete('/', asyncMiddleware(removeMonitorCampaign));
 router.get('/:monitorCampaignId', asyncMiddleware(getMonitorCampaignById));
