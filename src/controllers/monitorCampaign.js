@@ -90,7 +90,7 @@ const createMonitorCampaign = async (req, res) => {
 };
 
 const getMonitorCampaigns = async (req, res) => {
-  let { timeFrom, timeTo } = req.query;
+  let { timeFrom, timeTo, task } = req.query;
   if (!timeFrom) {
     timeFrom = '2020-1-1';
   }
@@ -101,19 +101,36 @@ const getMonitorCampaigns = async (req, res) => {
 
   timeTo = new Date(timeTo);
   timeFrom = new Date(timeFrom);
+  let monitorCampains;
 
-  const monitorCampains = await MonitorCampaign.find({
-    $or: [
-      {
-        startTime: { $gte: timeFrom, $lte: timeTo },
-      },
-      {
-        endTime: { $gte: timeFrom, $lte: timeTo },
-      },
-    ],
-  })
-    .populate('labels')
-    .lean();
+  if (task) {
+    monitorCampains = await MonitorCampaign.find({
+      task,
+      $or: [
+        {
+          startTime: { $gte: timeFrom, $lte: timeTo },
+        },
+        {
+          endTime: { $gte: timeFrom, $lte: timeTo },
+        },
+      ],
+    })
+      .populate('labels')
+      .lean();
+  } else {
+    monitorCampains = await MonitorCampaign.find({
+      $or: [
+        {
+          startTime: { $gte: timeFrom, $lte: timeTo },
+        },
+        {
+          endTime: { $gte: timeFrom, $lte: timeTo },
+        },
+      ],
+    })
+      .populate('labels')
+      .lean();
+  }
 
   const numberOfMonitorCampaigns = monitorCampains.length;
 
@@ -149,7 +166,7 @@ const getMonitorCampaigns = async (req, res) => {
 
       // map monitoredZone with fully info monitor zone
       res = await axios.get(
-        `https://monitoredzoneserver.herokuapp.com/monitoredzone/zoneinfo/${monitoredZoneId}`
+        `https://monitoredzoneserver.herokuapp.com/monitoredzone/zoneinfo/5fcf4f6fa065e000176e1f86`
       );
 
       const monitoredZone = res.data.content.zone;
