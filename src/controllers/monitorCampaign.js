@@ -172,7 +172,7 @@ const getMonitorCampaigns = async (req, res) => {
         { headers: { token: req.token, projecttype: req.projectType } }
       );
 
-      const monitoredZone = res.data.content.result;
+      const monitoredZone = res.data.content.zone;
 
       return {
         ...monitorCampain,
