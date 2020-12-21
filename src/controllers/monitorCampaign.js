@@ -162,13 +162,14 @@ const getMonitorCampaigns = async (req, res) => {
           res = await axios.get(
             `https://dsd05-monitored-object.herokuapp.com/monitored-object/detail-monitored-object/${monitoredObjectId}`
           );
-          return { ...res.data };
+          return { ...res.data.content };
         })
       );
 
       // map monitoredZone with fully info monitor zone
       res = await axios.get(
-        `https://monitoredzoneserver.herokuapp.com/monitoredzone/zoneinfo/${monitoredZoneId}`
+        `https://monitoredzoneserver.herokuapp.com/monitoredzone/zoneinfo/${monitoredZoneId}`,
+        { headers: { token: req.token, projecttype: req.projectType } }
       );
 
       const monitoredZone = res.data.content.zone;

@@ -4,11 +4,9 @@ const axios = require('axios');
 
 const auth = async (req, res, next) => {
   const { authorization, projecttype } = req.headers;
-  console.log(req.headers);
   if (!authorization) throw new CustomError(codes.UNAUTHORIZED);
 
   const [tokenType, token] = authorization.split(' ');
-  console.log({ tokenType, token, projecttype });
 
   if (tokenType !== 'Bearer') throw new Error(codes.UNAUTHORIZED);
 
@@ -40,6 +38,8 @@ const auth = async (req, res, next) => {
   }
 
   req.task = task;
+  req.token = token;
+  req.projectType = projecttype;
   // if (['/auths/logout', '/auths/verify'].includes(req.path)) {
   //   req.accessToken = accessToken;
   // }
