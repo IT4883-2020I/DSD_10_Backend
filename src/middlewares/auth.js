@@ -3,17 +3,28 @@ const codes = require('../errors/code');
 const axios = require('axios');
 
 const auth = async (req, res, next) => {
-  const { projecttype } = req.headers;
-  // console.log(req.headers);
-  // if (!authorization) throw new CustomError(codes.UNAUTHORIZED);
+  const { authorization, projecttype } = req.headers;
+  console.log(req.headers);
+  if (!authorization) throw new CustomError(codes.UNAUTHORIZED);
 
-  // const [tokenType, token] = authorization.split(' ');
-  // console.log({ tokenType, token, projecttype });
+  const [tokenType, token] = authorization.split(' ');
+  console.log({ tokenType, token, projecttype });
 
-  // if (tokenType !== 'Bearer') throw new Error(codes.UNAUTHORIZED);
+  if (tokenType !== 'Bearer') throw new Error(codes.UNAUTHORIZED);
 
+  const response = await axios.get(
+    'https://distributed.de-lalcool.com/api/verify-token',
+    {
+      headers: {
+        'api-token': token,
+        'project-type': projecttype,
+      },
+    }
+  );
+
+  const projectType = response.data.result.type;
   let task;
-  switch (projecttype) {
+  switch (projectType) {
     case 'CHAY_RUNG':
       task = 'Cháy rừng';
       break;
