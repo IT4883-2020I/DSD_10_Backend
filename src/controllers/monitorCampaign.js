@@ -18,7 +18,12 @@ const createMonitorCampaign = async (req, res) => {
     startTime,
   } = req.body;
 
-  const task = req.task;
+  let task;
+  if (req.task) {
+    task = req.task;
+  } else {
+    task = req.body.task;
+  }
 
   const monitorCampaign = await MonitorCampaign.create({
     labels,
