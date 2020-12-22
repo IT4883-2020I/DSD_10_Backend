@@ -1,10 +1,14 @@
 const CustomError = require('../errors/CustomError');
 const codes = require('../errors/code');
 const axios = require('axios');
+const asyncMiddleware = require('./async');
 
 const auth = async (req, res, next) => {
   const { authorization, projecttype } = req.headers;
-  if (!authorization) throw new CustomError(codes.UNAUTHORIZED);
+  if (!authorization || !projecttype) {
+    console.log('chay vao day');
+    throw new CustomError(codes.UNAUTHORIZED);
+  }
 
   const [tokenType, token] = authorization.split(' ');
 
@@ -47,4 +51,4 @@ const auth = async (req, res, next) => {
   return next();
 };
 
-module.exports = auth;
+module.exports = asyncMiddleware(auth);
