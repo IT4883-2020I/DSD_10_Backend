@@ -276,9 +276,9 @@ const getMonitorCampaignById = async (req, res) => {
     throw new CustomError(codes.BAD_REQUEST, 'Missing monitorCampaignId');
   }
 
-  const monitorCampaign = await MonitorCampaign.findById(
-    monitorCampaignId
-  ).lean();
+  const monitorCampaign = await MonitorCampaign.findById(monitorCampaignId)
+    .populate('labels')
+    .lean();
 
   if (!monitorCampaign) {
     throw new CustomError(codes.NOT_FOUND);
