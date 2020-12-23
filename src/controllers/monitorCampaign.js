@@ -3,6 +3,7 @@ const CustomError = require('../errors/CustomError');
 const codes = require('../errors/code');
 const axios = require('axios').default;
 const { omitIsNil } = require('../utils/omitIsNil');
+const mongoose = require('mongoose');
 
 const createMonitorCampaign = async (req, res) => {
   const {
@@ -98,7 +99,6 @@ const createMonitorCampaign = async (req, res) => {
 
 const getMonitorCampaigns = async (req, res) => {
   let {
-    id,
     name,
     mechanism,
     metadataType,
@@ -118,12 +118,10 @@ const getMonitorCampaigns = async (req, res) => {
   endTime = new Date(endTime);
   startTime = new Date(startTime);
   let monitorCampains;
-  console.log({ name });
 
   const query = omitIsNil(
     {
       task,
-      _id: { $regex: id },
       name: { $regex: name },
       mechanism,
       metadataType,
@@ -139,10 +137,6 @@ const getMonitorCampaigns = async (req, res) => {
     },
     true
   );
-
-  if (!id) {
-    delete id;
-  }
 
   if (!name) {
     delete query.name;
