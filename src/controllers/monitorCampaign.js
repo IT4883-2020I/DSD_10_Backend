@@ -118,23 +118,31 @@ const getMonitorCampaigns = async (req, res) => {
   endTime = new Date(endTime);
   startTime = new Date(startTime);
   let monitorCampains;
+  console.log({ name });
 
-  const query = omitIsNil({
-    task,
-    _id: id,
-    name: { $regex: name },
-    mechanism,
-    metadataType,
-    resolution,
-    $or: [
-      {
-        startTime: { $gte: startTime, $lte: endTime },
-      },
-      {
-        endTime: { $gte: startTime, $lte: endTime },
-      },
-    ],
-  });
+  const query = omitIsNil(
+    {
+      task,
+      _id: id,
+      name: { $regex: name },
+      mechanism,
+      metadataType,
+      resolution,
+      $or: [
+        {
+          startTime: { $gte: startTime, $lte: endTime },
+        },
+        {
+          endTime: { $gte: startTime, $lte: endTime },
+        },
+      ],
+    },
+    true
+  );
+
+  if (!name) {
+    delete query.name;
+  }
 
   monitorCampains = await MonitorCampaign.find(query).populate('labels').lean();
 
