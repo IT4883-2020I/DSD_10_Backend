@@ -151,33 +151,48 @@ const getMonitorCampaigns = async (req, res) => {
       let res;
 
       // map droneIds with fully info drones
-
-      const drones = await Promise.all(
-        droneFullInfo.map(async (drone) => {
-          res = await axios.get(
-            `http://skyrone.cf:6789/drone/getById/${drone.id}`
-          );
-          return { ...res.data, ...drone };
-        })
-      );
+      let drones;
+      try {
+        drones = await Promise.all(
+          droneFullInfo.map(async (drone) => {
+            res = await axios.get(
+              `http://skyrone.cf:6789/drone/getById/${drone.id}`
+            );
+            return { ...res.data, ...drone };
+          })
+        );
+      } catch (error) {
+        drones = [];
+      }
 
       // map monitoredObject with fully info monitor object
-      const monitoredObjects = await Promise.all(
-        monitoredObjectIds.map(async (monitoredObjectId) => {
-          res = await axios.get(
-            `https://dsd05-monitored-object.herokuapp.com/monitored-object/detail-monitored-object/${monitoredObjectId}`
-          );
-          return { ...res.data.content };
-        })
-      );
+      let monitoredObjects;
+      try {
+        monitoredObjects = await Promise.all(
+          monitoredObjectIds.map(async (monitoredObjectId) => {
+            res = await axios.get(
+              `https://dsd05-monitored-object.herokuapp.com/monitored-object/detail-monitored-object/${monitoredObjectId}`
+            );
+            return { ...res.data.content };
+          })
+        );
+      } catch (error) {
+        monitoredObjects = []
+      }
+      
 
-      // map monitoredZone with fully info monitor zone
-      res = await axios.get(
-        `https://monitoredzoneserver.herokuapp.com/monitoredzone/zoneinfo/${monitoredZoneId}`,
-        { headers: { token: req.token, projecttype: req.projectType } }
-      );
-
-      const monitoredZone = res.data.content.zone;
+      let monitoredZone;
+      try {
+        // map monitoredZone with fully info monitor zone
+        res = await axios.get(
+          `https://monitoredzoneserver.herokuapp.com/monitoredzone/zoneinfo/${monitoredZoneId}`,
+          { headers: { token: req.token, projecttype: req.projectType } }
+        );
+        monitoredZone = res.data.content.zone;
+      } catch (error) {
+        monitoredZone = {};
+      }
+     
 
       return {
         ...monitorCampain,
