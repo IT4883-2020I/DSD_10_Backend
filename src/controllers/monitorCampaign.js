@@ -2,6 +2,7 @@ const MonitorCampaign = require('../models/monitorCampaign');
 const CustomError = require('../errors/CustomError');
 const codes = require('../errors/code');
 const axios = require('axios').default;
+const { omitIsNil } = require('../utils/omitIsNil');
 
 const createMonitorCampaign = async (req, res) => {
   const {
@@ -96,48 +97,46 @@ const createMonitorCampaign = async (req, res) => {
 };
 
 const getMonitorCampaigns = async (req, res) => {
-  let { timeFrom, timeTo } = req.query;
+  let {
+    id,
+    name,
+    mechanism,
+    metadataType,
+    resolution,
+    startTime,
+    endTime,
+  } = req.query;
   const task = req.task;
-  if (!timeFrom) {
-    timeFrom = '2020-1-1';
+  if (!startTime) {
+    startTime = '2020-1-1';
   }
 
-  if (!timeTo) {
-    timeTo = '2025-1-1';
+  if (!endTime) {
+    endTime = '2025-1-1';
   }
 
-  timeTo = new Date(timeTo);
-  timeFrom = new Date(timeFrom);
+  endTime = new Date(endTime);
+  startTime = new Date(startTime);
   let monitorCampains;
 
-  if (task) {
-    monitorCampains = await MonitorCampaign.find({
-      task,
-      $or: [
-        {
-          startTime: { $gte: timeFrom, $lte: timeTo },
-        },
-        {
-          endTime: { $gte: timeFrom, $lte: timeTo },
-        },
-      ],
-    })
-      .populate('labels')
-      .lean();
-  } else {
-    monitorCampains = await MonitorCampaign.find({
-      $or: [
-        {
-          startTime: { $gte: timeFrom, $lte: timeTo },
-        },
-        {
-          endTime: { $gte: timeFrom, $lte: timeTo },
-        },
-      ],
-    })
-      .populate('labels')
-      .lean();
-  }
+  const query = omitIsNil({
+    task,
+    _id: id,
+    name: { $regex: name },
+    mechanism,
+    metadataType,
+    resolution,
+    $or: [
+      {
+        startTime: { $gte: startTime, $lte: endTime },
+      },
+      {
+        endTime: { $gte: startTime, $lte: endTime },
+      },
+    ],
+  });
+
+  monitorCampains = await MonitorCampaign.find(query).populate('labels').lean();
 
   const numberOfMonitorCampaigns = monitorCampains.length;
 
@@ -177,9 +176,8 @@ const getMonitorCampaigns = async (req, res) => {
           })
         );
       } catch (error) {
-        monitoredObjects = []
+        monitoredObjects = [];
       }
-      
 
       let monitoredZone;
       try {
@@ -192,7 +190,6 @@ const getMonitorCampaigns = async (req, res) => {
       } catch (error) {
         monitoredZone = {};
       }
-     
 
       return {
         ...monitorCampain,
