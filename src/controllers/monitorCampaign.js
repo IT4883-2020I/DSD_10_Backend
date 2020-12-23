@@ -123,7 +123,7 @@ const getMonitorCampaigns = async (req, res) => {
   const query = omitIsNil(
     {
       task,
-      _id: id,
+      _id: { $regex: id },
       name: { $regex: name },
       mechanism,
       metadataType,
@@ -139,6 +139,10 @@ const getMonitorCampaigns = async (req, res) => {
     },
     true
   );
+
+  if (!id) {
+    delete id;
+  }
 
   if (!name) {
     delete query.name;
