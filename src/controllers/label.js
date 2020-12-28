@@ -4,7 +4,7 @@ const Label = require('../models/label');
 const MonitorCampaign = require('../models/monitorCampaign');
 
 const createOtherLabel = async (req, res) => {
-  const { name, description } = req.body;
+  const { name, description, type } = req.body;
 
   const isExistLabel = await Label.findOne({ name });
   if (isExistLabel) {
@@ -15,6 +15,7 @@ const createOtherLabel = async (req, res) => {
     name,
     description,
     isDefault: false,
+    type
   });
   res.send({
     status: 1,
@@ -36,7 +37,7 @@ const getLabels = async (req, res) => {
 };
 
 const updateOtherLabel = async (req, res) => {
-  const { _id, name, description } = req.body;
+  const { _id, name, description, type } = req.body;
 
   if (!_id) {
     throw new CustomError(codes.BAD_REQUEST, 'Missing _id');
@@ -47,6 +48,7 @@ const updateOtherLabel = async (req, res) => {
     {
       name,
       description,
+      type
     },
     {
       new: true,

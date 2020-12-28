@@ -6,6 +6,11 @@ const labelSchema = mongoose.Schema(
       type: String,
       required: true,
     },
+    type: {
+      type: String,
+      enum: ['Payload', 'Drones', 'Sự cố'],
+      required: true,
+    },
     isDefault: {
       type: Boolean,
     },
