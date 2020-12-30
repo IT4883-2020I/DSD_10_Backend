@@ -51,7 +51,11 @@ const createMonitorCampaign = async (req, res) => {
   };
 
   const droneReqs = drones.map((drone) => {
-    return { idDrone: drone.id, listIdFlightPath: drone.flightPaths };
+    return {
+      idDrone: drone.id,
+      listIdFlightPath: drone.flightPaths,
+      // payloads: drone.payloads,
+    };
   });
 
   let taskReq = 0;
@@ -88,7 +92,24 @@ const createMonitorCampaign = async (req, res) => {
     config
   );
 
-  // Cap nhat trang thai cua mien giam sat
+  try {
+    await Promise.all(
+      drones.map(async (drone) => {
+        await Promise.all(
+          drone.payloads.map(async (payload) => {
+            console.log({ payload });
+            const res = await axios.post(
+              `https://dsd06.herokuapp.com/api/payloadregister/working/${payload}`,
+              { droneId: drone.id },
+              config
+            );
+          })
+        );
+      })
+    );
+  } catch (error) {
+    res.send(error.response.data);
+  }
 
   const logBody = {
     regionId: monitoredZone,
