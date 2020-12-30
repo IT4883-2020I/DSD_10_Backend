@@ -3,8 +3,7 @@ const CustomError = require("../errors/CustomError");
 const codes = require("../errors/code");
 const axios = require("axios").default;
 const { omitIsNil } = require("../utils/omitIsNil");
-const mongoose = require("mongoose");
-const moment = require('moment');
+const schedule = require('node-schedule');
 
 const {
   LOG_ADD_URL,
