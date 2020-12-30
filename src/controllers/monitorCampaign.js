@@ -1,10 +1,16 @@
-const MonitorCampaign = require('../models/monitorCampaign');
-const CustomError = require('../errors/CustomError');
-const codes = require('../errors/code');
-const axios = require('axios').default;
-const { omitIsNil } = require('../utils/omitIsNil');
-const mongoose = require('mongoose');
-const { LOG_ADD_URL, LOG_EDIT_URL, LOG_DELETE_URL } = require("../utils/constants");
+const MonitorCampaign = require("../models/monitorCampaign");
+const CustomError = require("../errors/CustomError");
+const codes = require("../errors/code");
+const axios = require("axios").default;
+const { omitIsNil } = require("../utils/omitIsNil");
+const mongoose = require("mongoose");
+const moment = require('moment');
+
+const {
+  LOG_ADD_URL,
+  LOG_EDIT_URL,
+  LOG_DELETE_URL,
+} = require("../utils/constants");
 
 const createMonitorCampaign = async (req, res) => {
   const {
@@ -46,7 +52,7 @@ const createMonitorCampaign = async (req, res) => {
   // Tao hanh trinh bay, cap nhat trang thai drone
   const config = {
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     },
   };
 
@@ -60,16 +66,16 @@ const createMonitorCampaign = async (req, res) => {
 
   let taskReq = 0;
   switch (task) {
-    case 'Cháy rừng':
+    case "Cháy rừng":
       taskReq = 1;
       break;
-    case 'Đê điều':
+    case "Đê điều":
       taskReq = 2;
       break;
-    case 'Điện':
+    case "Điện":
       taskReq = 3;
       break;
-    case 'Cây trồng':
+    case "Cây trồng":
       taskReq = 4;
       break;
     default:
@@ -103,6 +109,20 @@ const createMonitorCampaign = async (req, res) => {
               { droneId: drone.id },
               config
             );
+
+            try {
+              const timeReturn = new Date(endTime || Date.now() + 100)
+
+              schedule.scheduleJob(timeReturn, () => {
+                console.log("cron job return payload start");
+                axios.post(
+                  `https://dsd06.herokuapp.com/api/payloadregister/working/${payload}`,
+                  { fee: 1 }
+                );
+              });
+            } catch (error) {
+              console.log("cron job return payload", error);
+            }
           })
         );
       })
@@ -115,7 +135,7 @@ const createMonitorCampaign = async (req, res) => {
     regionId: monitoredZone,
     entityId: drones.map((drone) => drone.id).join(", "),
     description: "Tạo đợt giám sát",
-    authorId: '', // TODO
+    authorId: "", // TODO
     projectType: req.projectType,
     state: "1",
     name: name,
@@ -146,11 +166,11 @@ const getMonitorCampaigns = async (req, res) => {
   } = req.query;
   const task = req.task;
   if (!startTime) {
-    startTime = '2020-1-1';
+    startTime = "2020-1-1";
   }
 
   if (!endTime) {
-    endTime = '2025-1-1';
+    endTime = "2025-1-1";
   }
 
   endTime = new Date(endTime);
@@ -180,7 +200,7 @@ const getMonitorCampaigns = async (req, res) => {
     delete query.name;
   }
 
-  monitorCampains = await MonitorCampaign.find(query).populate('labels').lean();
+  monitorCampains = await MonitorCampaign.find(query).populate("labels").lean();
 
   const numberOfMonitorCampaigns = monitorCampains.length;
 
@@ -271,7 +291,7 @@ const updateMonitorCampaign = async (req, res) => {
   } = req.body;
 
   if (!_id) {
-    throw new CustomError(codes.BAD_REQUEST, 'Missing _id');
+    throw new CustomError(codes.BAD_REQUEST, "Missing _id");
   }
 
   const monitorCampaign = await MonitorCampaign.findByIdAndUpdate(
@@ -305,7 +325,7 @@ const updateMonitorCampaign = async (req, res) => {
     regionId: monitoredZone,
     entityId: drones.map((drone) => drone.id).join(", "),
     description: "Sửa đợt giám sát",
-    authorId: '', // TODO
+    authorId: "", // TODO
     projectType: req.projectType,
     state: "1",
     name: name,
@@ -329,7 +349,7 @@ const removeMonitorCampaign = async (req, res) => {
   const { _id } = req.body;
 
   if (!_id) {
-    throw new CustomError(codes.BAD_REQUEST, 'Missing _id');
+    throw new CustomError(codes.BAD_REQUEST, "Missing _id");
   }
 
   const monitorCampaign = await MonitorCampaign.findByIdAndRemove(_id);
@@ -350,11 +370,11 @@ const getMonitorCampaignById = async (req, res) => {
   const { monitorCampaignId } = req.params;
 
   if (!monitorCampaignId) {
-    throw new CustomError(codes.BAD_REQUEST, 'Missing monitorCampaignId');
+    throw new CustomError(codes.BAD_REQUEST, "Missing monitorCampaignId");
   }
 
   const monitorCampaign = await MonitorCampaign.findById(monitorCampaignId)
-    .populate('labels')
+    .populate("labels")
     .lean();
 
   if (!monitorCampaign) {
