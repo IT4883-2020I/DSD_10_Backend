@@ -4,6 +4,7 @@ const codes = require('../errors/code');
 const axios = require('axios').default;
 const { omitIsNil } = require('../utils/omitIsNil');
 const mongoose = require('mongoose');
+const { LOG_ADD_URL, LOG_EDIT_URL, LOG_DELETE_URL } = require("../utils/constants");
 
 const createMonitorCampaign = async (req, res) => {
   const {
@@ -88,6 +89,22 @@ const createMonitorCampaign = async (req, res) => {
   );
 
   // Cap nhat trang thai cua mien giam sat
+
+  const logBody = {
+    regionId: monitoredZone,
+    entityId: drones.map((drone) => drone.id).join(", "),
+    description: "Tạo đợt giám sát",
+    authorId: '', // TODO
+    projectType: req.projectType,
+    state: "1",
+    name: name,
+  };
+
+  try {
+    axios.post(LOG_ADD_URL, logBody);
+  } catch (error) {
+    console.log(error);
+  }
 
   res.send({
     status: 1,
@@ -262,6 +279,22 @@ const updateMonitorCampaign = async (req, res) => {
   // Cap nhat trang thai cua drone la khong co san
 
   // Cap nhat trang thai cua mien giam sat
+
+  const logBody = {
+    regionId: monitoredZone,
+    entityId: drones.map((drone) => drone.id).join(", "),
+    description: "Sửa đợt giám sát",
+    authorId: '', // TODO
+    projectType: req.projectType,
+    state: "1",
+    name: name,
+  };
+
+  try {
+    axios.post(LOG_EDIT_URL, logBody);
+  } catch (error) {
+    console.log(error);
+  }
 
   res.send({
     status: 1,

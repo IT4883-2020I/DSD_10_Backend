@@ -13,8 +13,8 @@ const auth = require('../middlewares/auth');
 
 router.post('/', auth, asyncMiddleware(createMonitorCampaign));
 router.get('/', auth, asyncMiddleware(getMonitorCampaigns));
-router.patch('/', asyncMiddleware(updateMonitorCampaign));
-router.delete('/', asyncMiddleware(removeMonitorCampaign));
+router.patch('/', auth, asyncMiddleware(updateMonitorCampaign));
+router.delete('/', auth, asyncMiddleware(removeMonitorCampaign));
 router.get('/:monitorCampaignId', auth, asyncMiddleware(getMonitorCampaignById));
 
 module.exports = router;
