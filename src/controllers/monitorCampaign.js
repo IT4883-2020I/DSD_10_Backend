@@ -130,17 +130,16 @@ const createMonitorCampaign = async (req, res) => {
     res.send(error.response.data);
   }
 
-  const logBody = {
-    regionId: monitoredZone,
-    entityId: drones.length.toString(),
-    description: "Tạo đợt giám sát",
-    authorId: req.header('user'), // TODO
-    projectType: req.projectType,
-    state: "1",
-    name: name,
-  };
-
   try {
+    const logBody = {
+      regionId: monitoredZone,
+      entityId: drones.length.toString(),
+      description: "Tạo đợt giám sát",
+      authorId: req.header('user'), // TODO
+      projectType: req.projectType,
+      state: "1",
+      name: name,
+    };
     axios.post(LOG_ADD_URL, logBody);
   } catch (error) {
     console.log(error);
@@ -320,17 +319,16 @@ const updateMonitorCampaign = async (req, res) => {
 
   // Cap nhat trang thai cua mien giam sat
 
-  const logBody = {
-    regionId: monitoredZone,
-    entityId: drones.length.toString(),
-    description: "Sửa đợt giám sát",
-    authorId: req.header('user'),
-    projectType: req.projectType,
-    state: "1",
-    name: name,
-  };
-
   try {
+    const logBody = {
+      regionId: monitoredZone,
+      entityId: drones.length.toString(),
+      description: "Sửa đợt giám sát",
+      authorId: req.header('user'),
+      projectType: req.projectType,
+      state: "1",
+      name: name,
+    };
     axios.post(LOG_EDIT_URL, logBody);
   } catch (error) {
     console.log(error);
@@ -356,18 +354,17 @@ const removeMonitorCampaign = async (req, res) => {
   if (!monitorCampaign) {
     throw new CustomError(codes.NOT_FOUND);
   }
-  
-  const logBody = {
-    regionId: monitorCampaign.monitoredZone,
-    entityId: monitorCampaign.drones.length.toString(),
-    description: "Xóa đợt giám sát",
-    authorId: req.header('user'), // TODO
-    projectType: req.projectType,
-    state: "1",
-    name: monitorCampaign.name,
-  };
 
   try {
+    const logBody = {
+      regionId: monitorCampaign.monitoredZone,
+      entityId: monitorCampaign.drones.length.toString(),
+      description: "Xóa đợt giám sát",
+      authorId: req.header('user'), // TODO
+      projectType: req.projectType,
+      state: "1",
+      name: monitorCampaign.name,
+    };
     axios.post(LOG_DELETE_URL, logBody);
   } catch (error) {
     console.log(error);
