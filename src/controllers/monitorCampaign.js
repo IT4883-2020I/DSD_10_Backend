@@ -113,10 +113,10 @@ const createMonitorCampaign = async (req, res) => {
               const timeReturn = new Date(endTime || Date.now() + 100)
 
               schedule.scheduleJob(timeReturn, () => {
-                console.log("cron job return payload start");
+                console.log("cron job return payload start. Payload ID ", payload);
                 axios.post(
                   `https://dsd06.herokuapp.com/api/payloadregister/return/${payload}`,
-                  { fee: 1 }
+                  // { fee: 1 }
                 );
               });
             } catch (error) {
