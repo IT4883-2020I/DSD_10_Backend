@@ -132,9 +132,9 @@ const createMonitorCampaign = async (req, res) => {
 
   const logBody = {
     regionId: monitoredZone,
-    entityId: drones.map((drone) => drone.id).join(", "),
+    entityId: drones.length.toString(),
     description: "Tạo đợt giám sát",
-    authorId: "", // TODO
+    authorId: req.header('user'), // TODO
     projectType: req.projectType,
     state: "1",
     name: name,
@@ -322,9 +322,9 @@ const updateMonitorCampaign = async (req, res) => {
 
   const logBody = {
     regionId: monitoredZone,
-    entityId: drones.map((drone) => drone.id).join(", "),
+    entityId: drones.length.toString(),
     description: "Sửa đợt giám sát",
-    authorId: "", // TODO
+    authorId: req.header('user'),
     projectType: req.projectType,
     state: "1",
     name: name,
@@ -355,6 +355,22 @@ const removeMonitorCampaign = async (req, res) => {
 
   if (!monitorCampaign) {
     throw new CustomError(codes.NOT_FOUND);
+  }
+  
+  const logBody = {
+    regionId: monitorCampaign.monitoredZone,
+    entityId: monitorCampaign.drones.length.toString(),
+    description: "Xóa đợt giám sát",
+    authorId: req.header('user'), // TODO
+    projectType: req.projectType,
+    state: "1",
+    name: monitorCampaign.name,
+  };
+
+  try {
+    axios.post(LOG_DELETE_URL, logBody);
+  } catch (error) {
+    console.log(error);
   }
 
   res.send({
