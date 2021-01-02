@@ -201,7 +201,10 @@ const getMonitorCampaigns = async (req, res) => {
     delete query.name;
   }
 
-  monitorCampains = await MonitorCampaign.find(query).populate('labels').lean();
+  monitorCampains = await MonitorCampaign.find(query)
+    .sort({ createdAt: 'desc' })
+    .populate('labels')
+    .lean();
 
   const numberOfMonitorCampaigns = monitorCampains.length;
 
