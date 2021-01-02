@@ -1,15 +1,15 @@
-const MonitorCampaign = require("../models/monitorCampaign");
-const CustomError = require("../errors/CustomError");
-const codes = require("../errors/code");
-const axios = require("axios").default;
-const { omitIsNil } = require("../utils/omitIsNil");
+const MonitorCampaign = require('../models/monitorCampaign');
+const CustomError = require('../errors/CustomError');
+const codes = require('../errors/code');
+const axios = require('axios').default;
+const { omitIsNil } = require('../utils/omitIsNil');
 const schedule = require('node-schedule');
 
 const {
   LOG_ADD_URL,
   LOG_EDIT_URL,
   LOG_DELETE_URL,
-} = require("../utils/constants");
+} = require('../utils/constants');
 
 const createMonitorCampaign = async (req, res) => {
   const {
@@ -51,7 +51,7 @@ const createMonitorCampaign = async (req, res) => {
   // Tao hanh trinh bay, cap nhat trang thai drone
   const config = {
     headers: {
-      "Content-Type": "application/json",
+      'Content-Type': 'application/json',
     },
   };
 
@@ -65,16 +65,16 @@ const createMonitorCampaign = async (req, res) => {
 
   let taskReq = 0;
   switch (task) {
-    case "Cháy rừng":
+    case 'Cháy rừng':
       taskReq = 1;
       break;
-    case "Đê điều":
+    case 'Đê điều':
       taskReq = 2;
       break;
-    case "Điện":
+    case 'Điện':
       taskReq = 3;
       break;
-    case "Cây trồng":
+    case 'Cây trồng':
       taskReq = 4;
       break;
     default:
@@ -110,17 +110,20 @@ const createMonitorCampaign = async (req, res) => {
             );
 
             try {
-              const timeReturn = new Date(endTime || Date.now() + 100)
+              const timeReturn = new Date(endTime || Date.now() + 100);
 
               schedule.scheduleJob(timeReturn, () => {
-                console.log("cron job return payload start. Payload ID ", payload);
+                console.log(
+                  'cron job return payload start. Payload ID ',
+                  payload
+                );
                 axios.post(
-                  `https://dsd06.herokuapp.com/api/payloadregister/return/${payload}`,
+                  `https://dsd06.herokuapp.com/api/payloadregister/return/${payload}`
                   // { fee: 1 }
                 );
               });
             } catch (error) {
-              console.log("cron job return payload", error);
+              console.log('cron job return payload', error);
             }
           })
         );
@@ -134,10 +137,10 @@ const createMonitorCampaign = async (req, res) => {
     const logBody = {
       regionId: monitoredZone,
       entityId: drones.length.toString(),
-      description: "Tạo đợt giám sát",
+      description: 'Tạo đợt giám sát',
       authorId: req.header('user'), // TODO
       projectType: req.projectType,
-      state: "1",
+      state: '1',
       name: name,
     };
     axios.post(LOG_ADD_URL, logBody);
@@ -164,11 +167,11 @@ const getMonitorCampaigns = async (req, res) => {
   } = req.query;
   const task = req.task;
   if (!startTime) {
-    startTime = "2020-1-1";
+    startTime = '2020-1-1';
   }
 
   if (!endTime) {
-    endTime = "2025-1-1";
+    endTime = '2025-1-1';
   }
 
   endTime = new Date(endTime);
@@ -198,7 +201,7 @@ const getMonitorCampaigns = async (req, res) => {
     delete query.name;
   }
 
-  monitorCampains = await MonitorCampaign.find(query).populate("labels").lean();
+  monitorCampains = await MonitorCampaign.find(query).populate('labels').lean();
 
   const numberOfMonitorCampaigns = monitorCampains.length;
 
@@ -289,7 +292,7 @@ const updateMonitorCampaign = async (req, res) => {
   } = req.body;
 
   if (!_id) {
-    throw new CustomError(codes.BAD_REQUEST, "Missing _id");
+    throw new CustomError(codes.BAD_REQUEST, 'Missing _id');
   }
 
   const monitorCampaign = await MonitorCampaign.findByIdAndUpdate(
@@ -323,10 +326,10 @@ const updateMonitorCampaign = async (req, res) => {
     const logBody = {
       regionId: monitoredZone,
       entityId: drones.length.toString(),
-      description: "Sửa đợt giám sát",
+      description: 'Sửa đợt giám sát',
       authorId: req.header('user'),
       projectType: req.projectType,
-      state: "1",
+      state: '1',
       name: name,
     };
     axios.post(LOG_EDIT_URL, logBody);
@@ -346,7 +349,7 @@ const removeMonitorCampaign = async (req, res) => {
   const { _id } = req.body;
 
   if (!_id) {
-    throw new CustomError(codes.BAD_REQUEST, "Missing _id");
+    throw new CustomError(codes.BAD_REQUEST, 'Missing _id');
   }
 
   const monitorCampaign = await MonitorCampaign.findByIdAndRemove(_id);
@@ -359,10 +362,10 @@ const removeMonitorCampaign = async (req, res) => {
     const logBody = {
       regionId: monitorCampaign.monitoredZone,
       entityId: monitorCampaign.drones.length.toString(),
-      description: "Xóa đợt giám sát",
+      description: 'Xóa đợt giám sát',
       authorId: req.header('user'), // TODO
       projectType: req.projectType,
-      state: "1",
+      state: '1',
       name: monitorCampaign.name,
     };
     axios.post(LOG_DELETE_URL, logBody);
@@ -382,11 +385,11 @@ const getMonitorCampaignById = async (req, res) => {
   const { monitorCampaignId } = req.params;
 
   if (!monitorCampaignId) {
-    throw new CustomError(codes.BAD_REQUEST, "Missing monitorCampaignId");
+    throw new CustomError(codes.BAD_REQUEST, 'Missing monitorCampaignId');
   }
 
   const monitorCampaign = await MonitorCampaign.findById(monitorCampaignId)
-    .populate("labels")
+    .populate('labels')
     .lean();
 
   if (!monitorCampaign) {
@@ -408,14 +411,24 @@ const getMonitorCampaignById = async (req, res) => {
         `http://skyrone.cf:6789/drone/getById/${drone.id}`
       );
 
-      const payloads = await Promise.all(
+      let getPayloadByIdError = 0;
+      let payloads;
+      payloads = await Promise.all(
         drone.payloads.map(async (payload) => {
-          const resp = await axios.get(
-            `https://dsd06.herokuapp.com/api/payload/${payload}`
-          );
-          return resp.data;
+          try {
+            const resp = await axios.get(
+              `https://dsd06.herokuapp.com/api/payload/${payload}`
+            );
+            return resp.data;
+          } catch (error) {
+            getPayloadByIdError = 1;
+          }
         })
       );
+
+      if (getPayloadByIdError) {
+        payloads = [];
+      }
       return { ...response.data, ...drone, payloads };
     })
   );
