@@ -407,7 +407,16 @@ const getMonitorCampaignById = async (req, res) => {
       response = await axios.get(
         `http://skyrone.cf:6789/drone/getById/${drone.id}`
       );
-      return { ...response.data, ...drone };
+
+      const payloads = await Promise.all(
+        drone.payloads.map(async (payload) => {
+          const resp = await axios.get(
+            `https://dsd06.herokuapp.com/api/payload/${payload}`
+          );
+          return resp.data;
+        })
+      );
+      return { ...response.data, ...drone, payloads };
     })
   );
 
