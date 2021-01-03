@@ -201,75 +201,78 @@ const getMonitorCampaigns = async (req, res) => {
     delete query.name;
   }
 
-  monitorCampains = await MonitorCampaign.find(query).populate('labels').lean();
+  monitorCampaigns = await MonitorCampaign.find(query)
+    .populate('labels')
+    .lean();
 
-  const numberOfMonitorCampaigns = monitorCampains.length;
+  const numberOfMonitorCampaigns = monitorCampaigns.length;
 
-  const monitorCampainsFullInfo = await Promise.all(
-    monitorCampains.map(async (monitorCampain) => {
-      const {
-        drones: droneFullInfo,
-        monitoredObjects: monitoredObjectIds,
-        monitoredZone: monitoredZoneId,
-      } = monitorCampain;
-      let res;
+  // const monitorCampainsFullInfo = await Promise.all(
+  //   monitorCampains.map(async (monitorCampain) => {
+  //     const {
+  //       drones: droneFullInfo,
+  //       monitoredObjects: monitoredObjectIds,
+  //       monitoredZone: monitoredZoneId,
+  //     } = monitorCampain;
+  //     let res;
 
-      // map droneIds with fully info drones
-      let drones;
-      try {
-        drones = await Promise.all(
-          droneFullInfo.map(async (drone) => {
-            res = await axios.get(
-              `http://skyrone.cf:6789/drone/getById/${drone.id}`
-            );
-            return { ...res.data, ...drone };
-          })
-        );
-      } catch (error) {
-        drones = [];
-      }
+  //     // map droneIds with fully info drones
+  //     let drones;
+  //     try {
+  //       drones = await Promise.all(
+  //         droneFullInfo.map(async (drone) => {
+  //           res = await axios.get(
+  //             `http://skyrone.cf:6789/drone/getById/${drone.id}`
+  //           );
+  //           return { ...res.data, ...drone };
+  //         })
+  //       );
+  //     } catch (error) {
+  //       drones = [];
+  //     }
 
-      // map monitoredObject with fully info monitor object
-      let monitoredObjects;
-      try {
-        monitoredObjects = await Promise.all(
-          monitoredObjectIds.map(async (monitoredObjectId) => {
-            res = await axios.get(
-              `https://dsd05-monitored-object.herokuapp.com/monitored-object/detail-monitored-object/${monitoredObjectId}`
-            );
-            return { ...res.data.content };
-          })
-        );
-      } catch (error) {
-        monitoredObjects = [];
-      }
+  //     // map monitoredObject with fully info monitor object
+  //     let monitoredObjects;
+  //     try {
+  //       monitoredObjects = await Promise.all(
+  //         monitoredObjectIds.map(async (monitoredObjectId) => {
+  //           res = await axios.get(
+  //             `https://dsd05-monitored-object.herokuapp.com/monitored-object/detail-monitored-object/${monitoredObjectId}`
+  //           );
+  //           return { ...res.data.content };
+  //         })
+  //       );
+  //     } catch (error) {
+  //       monitoredObjects = [];
+  //     }
 
-      let monitoredZone;
-      try {
-        // map monitoredZone with fully info monitor zone
-        res = await axios.get(
-          `https://monitoredzoneserver.herokuapp.com/monitoredzone/zoneinfo/${monitoredZoneId}`,
-          { headers: { token: req.token, projecttype: req.projectType } }
-        );
-        monitoredZone = res.data.content.zone;
-      } catch (error) {
-        monitoredZone = {};
-      }
+  //     let monitoredZone;
+  //     try {
+  //       // map monitoredZone with fully info monitor zone
+  //       res = await axios.get(
+  //         `https://monitoredzoneserver.herokuapp.com/monitoredzone/zoneinfo/${monitoredZoneId}`,
+  //         { headers: { token: req.token, projecttype: req.projectType } }
+  //       );
+  //       monitoredZone = res.data.content.zone;
+  //     } catch (error) {
+  //       monitoredZone = {};
+  //     }
 
-      return {
-        ...monitorCampain,
-        monitoredObjects,
-        monitoredZone,
-        drones,
-      };
-    })
-  );
+  //     return {
+  //       ...monitorCampain,
+  //       monitoredObjects,
+  //       monitoredZone,
+  //       drones,
+  //     };
+  //   })
+  // );
 
   res.send({
     status: 1,
     result: {
       numberOfMonitorCampaigns,
-      monitorCampaigns: monitorCampainsFullInfo,
+      // monitorCampaigns: monitorCampainsFullInfo,
+      monitorCampaigns,
     },
   });
 };
