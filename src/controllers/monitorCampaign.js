@@ -336,7 +336,7 @@ const updateMonitorCampaign = async (req, res) => {
       state: '1',
       name: name,
     };
-    axios.post(LOG_EDIT_URL, logBody);
+    await axios.post(LOG_EDIT_URL, logBody);
   } catch (error) {
     console.log(error);
   }
@@ -362,6 +362,12 @@ const removeMonitorCampaign = async (req, res) => {
     throw new CustomError(codes.NOT_FOUND);
   }
 
+  const config = {
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  };
+
   try {
     const logBody = {
       regionId: monitorCampaign.monitoredZone,
@@ -372,7 +378,7 @@ const removeMonitorCampaign = async (req, res) => {
       state: '1',
       name: monitorCampaign.name,
     };
-    await axios.post(LOG_DELETE_URL, logBody);
+    await axios.post(LOG_DELETE_URL, logBody, config);
   } catch (error) {
     console.log(error);
   }
