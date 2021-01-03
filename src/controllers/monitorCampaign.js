@@ -64,18 +64,23 @@ const createMonitorCampaign = async (req, res) => {
   });
 
   let taskReq = 0;
+  let projectType;
   switch (task) {
     case 'Cháy rừng':
       taskReq = 1;
+      projectType = 'CHAY_RUNG';
       break;
     case 'Đê điều':
       taskReq = 2;
+      projectType = 'DE_DIEU';
       break;
     case 'Điện':
       taskReq = 3;
+      projectType = 'CAY_TRONG';
       break;
     case 'Cây trồng':
       taskReq = 4;
+      projectType = 'LUOI_DIEN';
       break;
     default:
       break;
@@ -139,7 +144,7 @@ const createMonitorCampaign = async (req, res) => {
       entityId: drones.length.toString(),
       description: 'Tạo đợt giám sát',
       authorId: req.header('user'), // TODO
-      projectType: req.projectType,
+      projectType,
       state: '1',
       name: name,
     };
@@ -322,9 +327,22 @@ const updateMonitorCampaign = async (req, res) => {
     throw new CustomError(codes.NOT_FOUND);
   }
 
-  // Cap nhat trang thai cua drone la khong co san
-
-  // Cap nhat trang thai cua mien giam sat
+  switch (monitorCampaign.task) {
+    case 'Cháy rừng':
+      projectType = 'CHAY_RUNG';
+      break;
+    case 'Đê điều':
+      projectType = 'DE_DIEU';
+      break;
+    case 'Điện':
+      projectType = 'CAY_TRONG';
+      break;
+    case 'Cây trồng':
+      projectType = 'LUOI_DIEN';
+      break;
+    default:
+      break;
+  }
 
   try {
     const logBody = {
@@ -332,7 +350,7 @@ const updateMonitorCampaign = async (req, res) => {
       entityId: drones.length.toString(),
       description: 'Sửa đợt giám sát',
       authorId: req.header('user'),
-      projectType: req.projectType,
+      projectType,
       state: '1',
       name: name,
     };
@@ -383,6 +401,23 @@ const removeMonitorCampaign = async (req, res) => {
     res.send(error.response.data);
   }
 
+  switch (monitorCampaign.task) {
+    case 'Cháy rừng':
+      projectType = 'CHAY_RUNG';
+      break;
+    case 'Đê điều':
+      projectType = 'DE_DIEU';
+      break;
+    case 'Điện':
+      projectType = 'CAY_TRONG';
+      break;
+    case 'Cây trồng':
+      projectType = 'LUOI_DIEN';
+      break;
+    default:
+      break;
+  }
+
   const config = {
     headers: {
       'Content-Type': 'application/json',
@@ -395,7 +430,7 @@ const removeMonitorCampaign = async (req, res) => {
       entityId: monitorCampaign.drones.length.toString(),
       description: 'Xóa đợt giám sát',
       authorId: req.header('user'), // TODO
-      projectType: req.projectType,
+      projectType,
       state: '1',
       name: monitorCampaign.name,
     };
