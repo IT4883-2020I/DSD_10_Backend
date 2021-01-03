@@ -419,9 +419,7 @@ const getMonitorCampaignById = async (req, res) => {
 
   const drones = await Promise.all(
     droneFullInfo.map(async (drone) => {
-      response = await axios.get(
-        `http://skyrone.cf:6789/drone/getById/${drone.id}`
-      );
+      // console.log({drone: response.data});
 
       let getPayloadByIdError = 0;
       let payloads;
@@ -441,6 +439,11 @@ const getMonitorCampaignById = async (req, res) => {
       if (getPayloadByIdError) {
         payloads = [];
       }
+
+      response = await axios.get(
+        `http://skyrone.cf:6789/drone/getById/${drone.id}`
+      );
+
       return { ...response.data, ...drone, payloads };
     })
   );
