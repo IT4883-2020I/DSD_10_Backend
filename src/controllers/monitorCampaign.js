@@ -143,7 +143,7 @@ const createMonitorCampaign = async (req, res) => {
       state: '1',
       name: name,
     };
-    axios.post(LOG_ADD_URL, logBody);
+    await axios.post(LOG_ADD_URL, logBody);
   } catch (error) {
     console.log(error);
   }
@@ -371,7 +371,15 @@ const removeMonitorCampaign = async (req, res) => {
       state: '1',
       name: monitorCampaign.name,
     };
-    axios.post(LOG_DELETE_URL, logBody);
+    await axios.post(LOG_DELETE_URL, logBody);
+  } catch (error) {
+    console.log(error);
+  }
+
+  try {
+    await axios.get(
+      `http://skyrone.cf:6789/flightItinerary/delteByCampaign/${_id}`
+    );
   } catch (error) {
     console.log(error);
   }
