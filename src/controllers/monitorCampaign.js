@@ -143,7 +143,7 @@ const createMonitorCampaign = async (req, res) => {
       state: '1',
       name: name,
     };
-    await axios.post(LOG_ADD_URL, logBody);
+    await axios.post(LOG_ADD_URL, logBody, config);
   } catch (error) {
     console.log(error);
   }
@@ -360,6 +360,27 @@ const removeMonitorCampaign = async (req, res) => {
 
   if (!monitorCampaign) {
     throw new CustomError(codes.NOT_FOUND);
+  }
+
+  try {
+    await Promise.all(
+      monitorCampaign.drones.map(async (drone) => {
+        await Promise.all(
+          drone.payloads.map(async (payload) => {
+            try {
+              axios.post(
+                `https://dsd06.herokuapp.com/api/payloadregister/return/${payload}`
+                // { fee: 1 }
+              );
+            } catch (error) {
+              console.log('cron job return payload', error);
+            }
+          })
+        );
+      })
+    );
+  } catch (error) {
+    res.send(error.response.data);
   }
 
   const config = {
