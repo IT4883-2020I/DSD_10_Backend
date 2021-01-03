@@ -23,7 +23,6 @@ router.get(
 );
 router.get(
   '/quick/:monitorCampaignId',
-  auth,
   asyncMiddleware(getQuickMonitorCampaignById)
 );
 
