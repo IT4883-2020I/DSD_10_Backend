@@ -202,6 +202,7 @@ const getMonitorCampaigns = async (req, res) => {
   }
 
   monitorCampaigns = await MonitorCampaign.find(query)
+    .sort({ createdAt: 'desc' })
     .populate('labels')
     .lean();
 
