@@ -572,23 +572,30 @@ const getQuickMonitorCampaignById = async (req, res) => {
 
 const getQuickMonitorCampaignByMonitoredZone = async (req, res) => {
   const { monitoredZoneId } = req.params;
+  const current = new Date();
 
   if (!monitoredZoneId) {
     throw new CustomError(codes.BAD_REQUEST, 'Missing monitoredZoneId');
   }
+  
+  const monitorCampaigns = await MonitorCampaign.aggregate([
+    {
+      $match: {
+        startTime: { $lte: current },
+        endTime: { $gte: current },
+        monitoredZone: monitoredZoneId,
+      },
+    },
+  ]).lean();
 
-  const monitorCampaign = await MonitorCampaign.findOne({ monitoredZone: monitoredZoneId })
-    .populate('labels')
-    .lean();
-
-  if (!monitorCampaign) {
+  if (!monitorCampaigns) {
     throw new CustomError(codes.NOT_FOUND);
   }
 
   res.send({
     status: 1,
     result: {
-      monitorCampaign,
+      monitorCampaigns,
     },
   });
 };
