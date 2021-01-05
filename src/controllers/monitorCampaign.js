@@ -586,7 +586,7 @@ const getQuickMonitorCampaignByMonitoredZone = async (req, res) => {
         monitoredZone: monitoredZoneId,
       },
     },
-  ]).lean();
+  ]);
 
   if (!monitorCampaigns) {
     throw new CustomError(codes.NOT_FOUND);
