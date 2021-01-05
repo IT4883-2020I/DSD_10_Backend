@@ -570,6 +570,29 @@ const getQuickMonitorCampaignById = async (req, res) => {
   });
 };
 
+const getQuickMonitorCampaignByMonitoredZone = async (req, res) => {
+  const { monitoredZoneId } = req.params;
+
+  if (!monitoredZoneId) {
+    throw new CustomError(codes.BAD_REQUEST, 'Missing monitoredZoneId');
+  }
+
+  const monitorCampaign = await MonitorCampaign.findOne({ monitoredZone: monitoredZoneId })
+    .populate('labels')
+    .lean();
+
+  if (!monitorCampaign) {
+    throw new CustomError(codes.NOT_FOUND);
+  }
+
+  res.send({
+    status: 1,
+    result: {
+      monitorCampaign,
+    },
+  });
+};
+
 module.exports = {
   createMonitorCampaign,
   getMonitorCampaigns,
@@ -577,4 +600,5 @@ module.exports = {
   removeMonitorCampaign,
   getMonitorCampaignById,
   getQuickMonitorCampaignById,
+  getQuickMonitorCampaignByMonitoredZone,
 };

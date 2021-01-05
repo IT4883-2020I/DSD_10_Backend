@@ -8,6 +8,7 @@ const {
   removeMonitorCampaign,
   getMonitorCampaignById,
   getQuickMonitorCampaignById,
+  getQuickMonitorCampaignByMonitoredZone,
 } = require('../controllers/monitorCampaign');
 const asyncMiddleware = require('../middlewares/async');
 const auth = require('../middlewares/auth');
@@ -24,6 +25,11 @@ router.get(
 router.get(
   '/quick/:monitorCampaignId',
   asyncMiddleware(getQuickMonitorCampaignById)
+);
+
+router.get(
+  '/zone/:monitoredZoneId',
+  asyncMiddleware(getQuickMonitorCampaignByMonitoredZone)
 );
 
 module.exports = router;
